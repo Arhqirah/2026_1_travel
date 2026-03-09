@@ -1,0 +1,28 @@
+{% include "_header.html" %}
+
+<main>
+    <section class="card page-center">
+        <form mix-post="/api-login" autocomplete="off">
+            <div>
+                <label>
+                    Email
+                </label>
+                <input name="user_email" type="email" placeholder="user email" value="">
+            </div>
+
+            <div>
+                <label>
+                    Password <span>{{ x.USER_PASSWORD_MIN }} to {{ x.USER_PASSWORD_MAX }} characters</span>
+                </label>
+                <input name="user_password" type="password" placeholder="user password" value="">
+            </div>
+
+            <button>
+                Login
+            </button>
+        </form>
+    </section>
+</main>
+
+{% include "_footer.html" %}
+    

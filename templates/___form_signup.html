@@ -1,0 +1,33 @@
+<form mix-post="/api-create-user" autocomplete="off">
+    <div>
+        <label>
+            First name <span>{{ x.USER_FIRST_NAME_MIN }} to {{ x.USER_FIRST_NAME_MAX }} characters</span>
+        </label>
+        <input name="user_first_name" type="text" placeholder="user first name" value="">
+    </div>
+
+    <div>
+        <label>
+            Last name <span>{{ x.USER_LAST_NAME_MIN }} to {{ x.USER_LAST_NAME_MAX }} characters</span>
+        </label>
+        <input name="user_last_name" type="text" placeholder="user last name" value="">
+    </div>
+
+    <div>
+        <label>
+            Email
+        </label>
+        <input name="user_email" type="email" placeholder="user email" value="">
+    </div>
+
+    <div>
+        <label>
+            Password <span>{{ x.USER_PASSWORD_MIN }} to {{ x.USER_PASSWORD_MAX }} characters</span>
+        </label>
+        <input name="user_password" type="password" placeholder="user password" value="">
+    </div>
+
+    <button>
+        Signup
+    </button>
+</form>

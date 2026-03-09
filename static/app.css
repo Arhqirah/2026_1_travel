@@ -1,0 +1,389 @@
+:root {
+    --bg: #ede7df;
+    --bg-image: url('/static/uploads/travel-background.jpg');
+    --surface: rgba(255, 250, 242, 0.9);
+    --text: #2f2a24;
+    --muted: #6f665b;
+    --primary: #0f766e;
+    --primary-dark: #115e59;
+    --border: rgba(95, 74, 52, 0.2);
+    --danger: #dc2626;
+    --danger-dark: #b91c1c;
+    --ok: #16a34a;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--text);
+    background-color: var(--bg);
+    background-image: linear-gradient(rgba(248, 242, 232, 0.78), rgba(248, 242, 232, 0.78)), var(--bg-image);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+main {
+    width: min(960px, 92%);
+    margin: 2rem auto 3rem;
+}
+
+nav {
+    width: 100%;
+    min-height: 3.5rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.nav-right {
+    color: var(--muted);
+    font-weight: 700;
+    font-size: 0.92rem;
+}
+
+nav a {
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.45rem 0.7rem;
+    border-radius: 8px;
+}
+
+nav a:hover {
+    background: #f3e8d8;
+}
+
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.25rem;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 10px 24px rgba(55, 42, 24, 0.12);
+}
+
+form {
+    display: grid;
+    gap: 0.9rem;
+}
+
+form div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+label {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+label span {
+    color: var(--muted);
+    font-weight: 500;
+    margin-left: 0.35rem;
+}
+
+input,
+textarea,
+button {
+    font: inherit;
+}
+
+input,
+textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.7rem 0.75rem;
+    background: rgba(255, 255, 255, 0.86);
+    color: var(--text);
+}
+
+input[type="file"] {
+    padding: 0.45rem 0.5rem;
+    cursor: pointer;
+}
+
+input[type="file"]::file-selector-button {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #f3ebe0;
+    color: var(--text);
+    font: inherit;
+    font-weight: 600;
+    padding: 0.5rem 0.8rem;
+    margin-right: 0.65rem;
+    cursor: pointer;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background: #eadfce;
+}
+
+input[type="file"]::-webkit-file-upload-button {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #f3ebe0;
+    color: var(--text);
+    font: inherit;
+    font-weight: 600;
+    padding: 0.5rem 0.8rem;
+    margin-right: 0.65rem;
+    cursor: pointer;
+}
+
+input[type="file"]::-webkit-file-upload-button:hover {
+    background: #eadfce;
+}
+
+input:focus,
+textarea:focus {
+    outline: 2px solid #99f6e4;
+    border-color: #5eead4;
+}
+
+button,
+.btn {
+    border: 0;
+    border-radius: 10px;
+    background: var(--primary);
+    color: #fff;
+    font-weight: 700;
+    padding: 0.65rem 0.95rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+}
+
+button:hover,
+.btn:hover {
+    background: var(--primary-dark);
+}
+
+.page-center {
+    max-width: 560px;
+    margin: 1.5rem auto;
+}
+
+.profile-hero {
+    display: grid;
+    gap: 0.85rem;
+}
+
+.profile-hero p {
+    color: var(--muted);
+}
+
+.profile-recent {
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.85rem;
+}
+
+.profile-trip-item {
+    display: grid;
+    grid-template-columns: 84px 1fr;
+    gap: 0.75rem;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.6rem;
+}
+
+.profile-trip-image {
+    width: 84px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.profile-muted {
+    color: var(--muted);
+}
+
+#tooltip {
+    position: fixed;
+    top: 4.25rem;
+    left: 0;
+    z-index: 20;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+}
+
+#tooltip .tip {
+    min-width: min(560px, 92vw);
+    max-width: min(560px, 92vw);
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: 0 8px 20px rgba(17, 24, 39, 0.08);
+}
+
+#tooltip .tip.ok {
+    border-color: #86efac;
+    background: #f0fdf4;
+    color: #166534;
+}
+
+#tooltip .tip.error {
+    border-color: #fecaca;
+    background: #fef2f2;
+    color: var(--danger-dark);
+}
+
+.destinations-page {
+    display: grid;
+    gap: 1.2rem;
+}
+
+.destinations-list {
+    display: grid;
+    gap: 1rem;
+    padding-bottom: 2rem;
+}
+
+.destination-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1rem;
+    display: grid;
+    gap: 0.85rem;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 10px 24px rgba(55, 42, 24, 0.12);
+}
+
+.destination-form {
+    display: grid;
+    gap: 0.8rem;
+}
+
+.destination-form textarea {
+    min-height: 92px;
+    resize: vertical;
+}
+
+.destination-image {
+    width: 100%;
+    max-height: 260px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+}
+
+.destination-actions,
+.destination-delete-form {
+    display: flex;
+    gap: 0.6rem;
+}
+
+.destination-delete-form button {
+    background: var(--danger);
+}
+
+.destination-delete-form button:hover {
+    background: var(--danger-dark);
+}
+
+footer {
+    width: 100%;
+    height: 0.5rem;
+    background: var(--border);
+}
+
+.app-confirm-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(47, 42, 36, 0.44);
+}
+
+.app-confirm-modal {
+    width: min(460px, 100%);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1rem;
+    box-shadow: 0 18px 40px rgba(39, 33, 25, 0.22);
+}
+
+.app-confirm-title {
+    font-size: 1.04rem;
+    font-weight: 700;
+}
+
+.app-confirm-message {
+    margin-top: 0.55rem;
+    color: var(--muted);
+    line-height: 1.45;
+}
+
+.app-confirm-actions {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.55rem;
+}
+
+.app-confirm-btn {
+    border: 0;
+    border-radius: 10px;
+    font: inherit;
+    font-weight: 700;
+    padding: 0.58rem 0.9rem;
+    cursor: pointer;
+}
+
+.app-confirm-btn-cancel {
+    background: #efe7dc;
+    color: var(--text);
+}
+
+.app-confirm-btn-cancel:hover {
+    background: #e5dacb;
+}
+
+.app-confirm-btn-ok {
+    background: var(--danger);
+    color: #fff;
+}
+
+.app-confirm-btn-ok:hover {
+    background: var(--danger-dark);
+}
+

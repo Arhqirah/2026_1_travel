@@ -1,0 +1,43 @@
+{% include "_header.html" %}
+
+<main>
+    <section class="card profile-hero">
+        <h1 id="welcome-message">Welcome to Travel Destinations</h1>
+        <p>Track your travel destinations and adventures.</p>
+        <div>
+            <a href="/destinations" class="btn">View Destinations</a>
+        </div>
+    </section>
+
+    <section class="card profile-recent">
+        <h2>Recent trips</h2>
+
+        {% if not recent_destinations %}
+            <p class="profile-muted">No trips yet. Create your first destination.</p>
+        {% endif %}
+
+        {% for destination in recent_destinations %}
+            <article class="profile-trip-item">
+                {% if destination.destination_image_name %}
+                    <img class="profile-trip-image" src="/static/uploads/{{ destination.destination_image_name }}" alt="Trip image for {{ destination.destination_title }}">
+                {% endif %}
+
+                <div>
+                    <h3>{{ destination.destination_title }}</h3>
+                    <p class="profile-muted">{{ destination.destination_country }}</p>
+                    {% if destination.destination_start_date or destination.destination_end_date %}
+                        <p class="profile-muted">
+                            {% if destination.destination_start_date %}{{ destination.destination_start_date }}{% else %}...{% endif %}
+                            to
+                            {% if destination.destination_end_date %}{{ destination.destination_end_date }}{% else %}...{% endif %}
+                        </p>
+                    {% endif %}
+                </div>
+            </article>
+        {% endfor %}
+    </section>
+
+</main>
+
+{% include "_footer.html" %}
+    

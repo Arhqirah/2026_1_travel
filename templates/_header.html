@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/static/app.css">
+
+    <title>Document</title>
+</head>
+<body>
+
+<div id="tooltip"></div>
+
+<nav>
+    <div class="nav-left">
+        <a href="/">Home</a>
+        <a href="/signup">Signup</a>
+
+        {% if not user %}
+            <a href="/login">Login</a>
+        {% else %}
+            <a href="/profile">Profile</a>
+            <a href="/destinations">Destinations</a>
+            <a href="/logout">Logout</a>
+        {% endif %}
+    </div>
+
+    {% if user %}
+        <div class="nav-right">Hi {{ user.user_first_name }}</div>
+    {% endif %}
+</nav>
