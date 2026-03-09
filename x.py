@@ -5,7 +5,7 @@ from datetime import date
 from functools import wraps
 
 ##############################
-# Opretter forbindelse til databasen og returnerer db + dictionary-cursor.
+# Creates a database connection and returns db + dictionary cursor.
 def db():
     try:
         db = mysql.connector.connect(
@@ -22,10 +22,10 @@ def db():
 
 
 ##############################
-# Decorator der saetter no-cache headers paa et view.
+# Decorator that sets no-cache headers on a view.
 def no_cache(view):
     @wraps(view)
-    # Wrapper der kalder view og tilfoejer cache-control headers.
+    # Wrapper that calls the view and adds cache-control headers.
     def no_cache_view(*args, **kwargs):
         response = make_response(view(*args, **kwargs))
         response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
@@ -39,7 +39,7 @@ def no_cache(view):
 USER_FIRST_NAME_MIN = 2
 USER_FIRST_NAME_MAX = 20
 REGEX_USER_FIRST_NAME = f"^.{{{USER_FIRST_NAME_MIN},{USER_FIRST_NAME_MAX}}}$"
-# Validerer fornavn laengde fra formular.
+# Validates first-name length from the form.
 def validate_user_first_name():
     user_first_name = request.form.get("user_first_name", "").strip()
     if not re.match(REGEX_USER_FIRST_NAME, user_first_name):
@@ -51,7 +51,7 @@ def validate_user_first_name():
 USER_LAST_NAME_MIN = 2
 USER_LAST_NAME_MAX = 20
 REGEX_USER_LAST_NAME = f"^.{{{USER_LAST_NAME_MIN},{USER_LAST_NAME_MAX}}}$"
-# Validerer efternavn laengde fra formular.
+# Validates last-name length from the form.
 def validate_user_last_name():
     user_last_name = request.form.get("user_last_name", "").strip()
     if not re.match(REGEX_USER_LAST_NAME, user_last_name):
@@ -61,7 +61,7 @@ def validate_user_last_name():
 
 ##############################
 REGEX_USER_EMAIL = "^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$"
-# Validerer e-mail format fra formular.
+# Validates email format from the form.
 def validate_user_email():
     user_email = request.form.get("user_email", "").strip()
     if not re.match(REGEX_USER_EMAIL, user_email): 
@@ -73,7 +73,7 @@ def validate_user_email():
 USER_PASSWORD_MIN = 8
 USER_PASSWORD_MAX = 50
 REGEX_USER_PASSWORD = f"^.{{{USER_PASSWORD_MIN},{USER_PASSWORD_MAX}}}$"
-# Validerer password laengde fra formular.
+# Validates password length from the form.
 def validate_user_password():
     user_password = request.form.get("user_password", "").strip()
     if not re.match(REGEX_USER_PASSWORD, user_password):
@@ -85,7 +85,7 @@ def validate_user_password():
 DESTINATION_TITLE_MIN = 2
 DESTINATION_TITLE_MAX = 100
 REGEX_DESTINATION_TITLE = f"^.{{{DESTINATION_TITLE_MIN},{DESTINATION_TITLE_MAX}}}$"
-# Validerer destinationens titel.
+# Validates destination title.
 def validate_destination_title():
     destination_title = request.form.get("destination_title", "").strip()
     if not re.match(REGEX_DESTINATION_TITLE, destination_title):
@@ -97,7 +97,7 @@ def validate_destination_title():
 DESTINATION_COUNTRY_MIN = 2
 DESTINATION_COUNTRY_MAX = 100
 REGEX_DESTINATION_COUNTRY = f"^.{{{DESTINATION_COUNTRY_MIN},{DESTINATION_COUNTRY_MAX}}}$"
-# Validerer destinationens land.
+# Validates destination country.
 def validate_destination_country():
     destination_country = request.form.get("destination_country", "").strip()
     if not re.match(REGEX_DESTINATION_COUNTRY, destination_country):
@@ -109,7 +109,7 @@ def validate_destination_country():
 DESTINATION_DESCRIPTION_MIN = 0
 DESTINATION_DESCRIPTION_MAX = 500
 REGEX_DESTINATION_DESCRIPTION = f"^.{{{DESTINATION_DESCRIPTION_MIN},{DESTINATION_DESCRIPTION_MAX}}}$"
-# Validerer beskrivelse/noter for destinationen.
+# Validates destination description/notes.
 def validate_destination_description():
     destination_description = request.form.get("destination_description", "").strip()
     if not re.match(REGEX_DESTINATION_DESCRIPTION, destination_description):
@@ -119,7 +119,7 @@ def validate_destination_description():
 
 ##############################
 REGEX_DESTINATION_DATE = r"^\d{4}-\d{2}-\d{2}$"
-# Validerer startdato i format YYYY-MM-DD eller tom vaerdi.
+# Validates start date in YYYY-MM-DD format or empty value.
 def validate_destination_start_date():
     destination_start_date = request.form.get("destination_start_date", "").strip()
     if destination_start_date == "":
@@ -134,7 +134,7 @@ def validate_destination_start_date():
 
 
 ##############################
-# Validerer slutdato i format YYYY-MM-DD eller tom vaerdi.
+# Validates end date in YYYY-MM-DD format or empty value.
 def validate_destination_end_date():
     destination_end_date = request.form.get("destination_end_date", "").strip()
     if destination_end_date == "":

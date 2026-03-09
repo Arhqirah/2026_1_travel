@@ -165,3 +165,44 @@ Kort betydning:
 
 Praktisk betydning:
 - Beskytter private sider mod uautoriseret adgang.
+
+## 11. Forskel pa `import time` og `import datetime`
+
+Kort version:
+- `import time`: Bruges mest til timestamps, ventetid og maaling af varighed.
+- `import datetime`: Bruges mest til rigtige datoer/tidspunkter og datologik.
+
+### `import time`
+
+Typiske linjer:
+```python
+import time
+
+now_ts = int(time.time())
+time.sleep(1)
+```
+
+Forklaring:
+- `time.time()`: Antal sekunder siden epoch (1970-01-01 UTC).
+- God til `created_at` / `updated_at` felter som heltal.
+- `time.sleep(...)`: Pauser kode i x sekunder.
+
+### `import datetime`
+
+Typiske linjer:
+```python
+from datetime import date
+
+today = date.today()
+d = date.fromisoformat("2026-03-09")
+```
+
+Forklaring:
+- `date.today()`: Dagens dato som dato-objekt.
+- `date.fromisoformat(...)`: Parser streng i `YYYY-MM-DD` til dato.
+- God til validering som: ingen dato i fortiden, slutdato efter startdato.
+
+### Hvad passer til dit projekt?
+
+- Brug `time` til Unix timestamps i DB (fx `destination_created_at`).
+- Brug `datetime/date` til dato-felter og sammenligninger (fx start/slutdato).

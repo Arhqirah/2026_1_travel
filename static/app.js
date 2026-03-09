@@ -1,4 +1,4 @@
-// Escaper tekst, sa den sikkert kan vises som HTML.
+// Escapes text so it can safely be rendered as HTML.
 function appEscapeHtml(value) {
 	const text = value == null ? "" : String(value)
 	return text
@@ -9,7 +9,7 @@ function appEscapeHtml(value) {
 		.replaceAll("'", "&#39;")
 }
 
-// Viser en brugerdefineret bekraeftelses-dialog og returnerer et Promise med svaret.
+// Shows a custom confirmation dialog and returns a Promise with the answer.
 function appConfirm(message) {
 	return new Promise((resolve) => {
 		const existing = document.getElementById("app-confirm-overlay")
@@ -60,7 +60,7 @@ function appConfirm(message) {
 	})
 }
 
-// Koerer en MixHTML-handling uden browserens native confirm.
+// Runs a MixHTML action without the browser's native confirm dialog.
 function appRunMixActionWithoutNativeConfirm(targetElement, trigger) {
 	const message = targetElement.getAttribute("mix-confirm")
 	targetElement.removeAttribute("mix-confirm")
@@ -76,7 +76,7 @@ function appRunMixActionWithoutNativeConfirm(targetElement, trigger) {
 	}
 }
 
-// Opfanger elementer med mix-confirm og viser vores egen dialog foer handlingen fortsaetter.
+// Catches elements with mix-confirm and shows our custom dialog before continuing.
 function appHandleMixConfirm(event) {
 	const eventTarget = event.target
 	if (!(eventTarget instanceof Element)) {
@@ -113,7 +113,7 @@ function appHandleMixConfirm(event) {
 document.addEventListener("click", appHandleMixConfirm, true)
 document.addEventListener("submit", appHandleMixConfirm, true)
 
-// Synkroniserer datoregler i et formular-saet: ingen datoer i fortiden og slutdato efter startdato.
+// Syncs date rules in a form set: no past dates and end date after start date.
 function appSyncDestinationDateConstraints(formElement) {
 	const startInput = formElement.querySelector('input[name="destination_start_date"]')
 	const endInput = formElement.querySelector('input[name="destination_end_date"]')
@@ -137,7 +137,7 @@ function appSyncDestinationDateConstraints(formElement) {
 	endInput.min = todayIso
 }
 
-// Initialiserer datoregler for alle destination-formularer og opdaterer regler ved input-aendringer.
+// Initializes date rules for all destination forms and updates them on input changes.
 function appSetupDestinationDateConstraints() {
 	const forms = document.querySelectorAll(".destination-form")
 	forms.forEach((formElement) => {
@@ -154,5 +154,5 @@ function appSetupDestinationDateConstraints() {
 	})
 }
 
-// Saetter datoregler op, naar siden er indlaest.
+// Sets up date rules when the page is loaded.
 document.addEventListener("DOMContentLoaded", appSetupDestinationDateConstraints)

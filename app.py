@@ -28,7 +28,7 @@ DESTINATION_DATE_COLUMNS_READY = False
 
 
 ##############################
-# Sikrer at destinations-tabellen har start/slut-dato kolonner.
+# Ensures the destinations table has start/end date columns.
 def ensure_destination_date_columns():
     global DESTINATION_DATE_COLUMNS_READY
     if DESTINATION_DATE_COLUMNS_READY:
@@ -60,7 +60,7 @@ def ensure_destination_date_columns():
 
 
 ##############################
-# Validerer at datoer ikke er i fortiden og at slutdato ikke er foer startdato.
+# Validates that dates are not in the past and end date is not before start date.
 def validate_destination_date_range(destination_start_date, destination_end_date):
     today = date.today()
 
@@ -84,7 +84,7 @@ def validate_destination_date_range(destination_start_date, destination_end_date
 
 
 ##############################
-# Gemmer uploadet destinationsbillede og returnerer filnavn.
+# Saves the uploaded destination image and returns the filename.
 def save_destination_image():
     image = request.files.get("destination_image")
     if not image or image.filename == "":
@@ -105,7 +105,7 @@ def save_destination_image():
 
 
 ##############################
-# Sletter et destinationsbillede fra disk (best effort).
+# Deletes a destination image from disk (best effort).
 def remove_destination_image(image_name):
     if not image_name:
         return
@@ -122,7 +122,7 @@ def remove_destination_image(image_name):
 
 ##############################
 @app.errorhandler(RequestEntityTooLarge)
-# Returnerer en venlig fejl hvis upload overstiger max stoerrelse.
+# Returns a friendly error when upload exceeds max size.
 def handle_file_too_large(_error):
     error_message = "Image too large (max 5MB)"
     ___tip = render_template("___tip.html", status="error", message=error_message)
@@ -131,7 +131,7 @@ def handle_file_too_large(_error):
 ##############################
 @app.get("/")
 @x.no_cache
-# Forside-route der sender brugeren videre til login eller profil.
+# Home route that sends the user to login or profile.
 def show_home():
     try:
         user = session.get("user", "")
@@ -144,7 +144,7 @@ def show_home():
 ##############################
 @app.get("/signup")
 @x.no_cache
-# Viser signup-side for ikke-loggede brugere.
+# Shows signup page for non-logged-in users.
 def show_signup():
     try:
         user = session.get("user", "")
@@ -156,7 +156,7 @@ def show_signup():
 
 ##############################
 @app.post("/api-create-user")
-# Opretter ny bruger, validerer input og hasher password.
+# Creates a new user, validates input, and hashes the password.
 def api_create_user():
     try:
         user_first_name = x.validate_user_first_name()
@@ -224,7 +224,7 @@ def api_create_user():
         ##############################
 @app.get("/login")
 @x.no_cache
-    # Viser login-side for ikke-loggede brugere.
+    # Shows login page for non-logged-in users.
 def show_login():
     try:
         user = session.get("user", "")
@@ -236,7 +236,7 @@ def show_login():
 
 ##############################
 @app.post("/api-login")
-# Logger brugeren ind og gemmer brugerdata i session.
+# Logs the user in and stores user data in session.
 def api_login():
     try:
         user_email = x.validate_user_email()
@@ -295,7 +295,7 @@ def api_login():
 
 @app.get("/profile")
 @x.no_cache
-# Viser profilside med de seneste destinationer.
+# Shows profile page with the latest destinations.
 def show_profile():
     try:
         user = session.get("user", "")
@@ -324,7 +324,7 @@ def show_profile():
 
 ##############################
 @app.get("/logout")
-# Logger brugeren ud ved at rydde session.
+# Logs the user out by clearing the session.
 def logout():
     try:
         session.clear()
@@ -337,7 +337,7 @@ def logout():
 ##############################
 @app.get("/destinations")
 @x.no_cache
-# Viser alle destinationer for den loggede bruger.
+# Shows all destinations for the logged-in user.
 def show_destinations():
     try:
         user = session.get("user", "")
@@ -367,7 +367,7 @@ def show_destinations():
 
 ##############################
 @app.post("/api-destinations-create")
-# Opretter en ny destination inkl. datoer, noter og evt. billede.
+# Creates a new destination including dates, notes, and optional image.
 def api_destinations_create():
     try:
         user = session.get("user", "")
@@ -472,7 +472,7 @@ def api_destinations_create():
 
 ##############################
 @app.post("/api-destinations-update/<destination_pk>")
-# Opdaterer en eksisterende destination og haandterer evt. nyt billede.
+# Updates an existing destination and handles optional new image.
 def api_destinations_update(destination_pk):
     try:
         user = session.get("user", "")
@@ -590,7 +590,7 @@ def api_destinations_update(destination_pk):
 
 ##############################
 @app.post("/api-destinations-delete/<destination_pk>")
-# Sletter en destination og rydder tilhoerende billede.
+# Deletes a destination and removes the related image.
 def api_destinations_delete(destination_pk):
     try:
         user = session.get("user", "")
