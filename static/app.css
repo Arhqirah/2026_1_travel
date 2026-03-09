@@ -108,12 +108,14 @@ label span {
 }
 
 input,
+select,
 textarea,
 button {
     font: inherit;
 }
 
 input,
+select,
 textarea {
     width: 100%;
     border: 1px solid var(--border);
@@ -161,6 +163,7 @@ input[type="file"]::-webkit-file-upload-button:hover {
 }
 
 input:focus,
+select:focus,
 textarea:focus {
     outline: 2px solid #99f6e4;
     border-color: #5eead4;
@@ -292,6 +295,33 @@ button:hover,
 .destination-form textarea {
     min-height: 92px;
     resize: vertical;
+}
+
+.country-autocomplete-dropdown {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 12px 28px rgba(39, 33, 25, 0.14);
+    max-height: 240px;
+    overflow-y: auto;
+    margin-top: 0.35rem;
+}
+
+.country-autocomplete-option {
+    width: 100%;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--text);
+    text-align: left;
+    padding: 0.58rem 0.75rem;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.country-autocomplete-option:hover,
+.country-autocomplete-option[aria-selected="true"] {
+    background: #d1fae5;
 }
 
 .destination-image {

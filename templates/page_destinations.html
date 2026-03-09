@@ -20,14 +20,14 @@
 
                 <div>
                     <label>
-                        Country <span>{{ x.DESTINATION_COUNTRY_MIN }} to {{ x.DESTINATION_COUNTRY_MAX }} characters</span>
+                        Country <span>choose a country from the list</span>
                     </label>
-                    <input
-                        name="destination_country"
-                        type="text"
-                        placeholder="e.g. Japan"
-                        mix-validate="{{x.REGEX_DESTINATION_COUNTRY}}"
-                    >
+                    <select name="destination_country" required>
+                        <option value="" selected disabled>Select country</option>
+                        {% for country in x.COUNTRIES %}
+                            <option value="{{ country }}">{{ country }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
 
                 <div>
@@ -92,12 +92,11 @@
 
                         <div>
                             <label>Country</label>
-                            <input
-                                name="destination_country"
-                                type="text"
-                                value="{{ destination.destination_country }}"
-                                mix-validate="{{x.REGEX_DESTINATION_COUNTRY}}"
-                            >
+                            <select name="destination_country" required>
+                                {% for country in x.COUNTRIES %}
+                                    <option value="{{ country }}" {% if country == destination.destination_country %}selected{% endif %}>{{ country }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
 
                         <div>
