@@ -1,4 +1,4 @@
-# Kode-noter: linje for linje (mest brugte ting)
+# Kode Noter
 
 Denne note forklarer de linjer/monstre, der bruges mest i `app.py`, `x.py` og `static/app.js`.
 Formatet er lavet som "linje for linje" i praksis: kort forklaring af hver typisk linje i flowet.
