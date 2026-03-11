@@ -126,7 +126,7 @@ def remove_destination_image(image_name):
 def handle_file_too_large(_error):
     error_message = "Image too large (max 5MB)"
     ___tip = render_template("___tip.html", status="error", message=error_message)
-    return f"""<browser mix-after-begin=\"#tooltip\">{___tip}</browser>""", 413
+    return f"""<browser mix-after-begin=\"#tooltip\">{___tip}</browser>""", 400
 
 ##############################
 @app.get("/")
@@ -476,7 +476,7 @@ def api_destinations_create():
 def api_destinations_update(destination_pk):
     try:
         user = session.get("user", "")
-        if not user: return "", 401
+        if not user: return "", 400
         ensure_destination_date_columns()
 
         destination_title = x.validate_destination_title()
@@ -498,7 +498,7 @@ def api_destinations_update(destination_pk):
         existing_destination = cursor.fetchone()
         if not existing_destination:
             ___tip = render_template("___tip.html", status="error", message="Destination not found")
-            return f"""<browser mix-after-begin=\"#tooltip\">{___tip}</browser>""", 404
+            return f"""<browser mix-after-begin=\"#tooltip\">{___tip}</browser>""", 400
 
         old_image_name = existing_destination["destination_image_name"]
         uploaded_image_name = save_destination_image()
@@ -539,7 +539,7 @@ def api_destinations_update(destination_pk):
     except RequestEntityTooLarge:
         error_message = "Image too large (max 5MB)"
         ___tip = render_template("___tip.html", status="error", message=error_message)
-        return f"""<browser mix-after-begin=\"#tooltip\">{___tip}</browser>""", 413
+        return f"""<browser mix-after-begin=\"#tooltip\">{___tip}</browser>""", 400
 
     except Exception as ex:
         ic(ex)
@@ -594,7 +594,7 @@ def api_destinations_update(destination_pk):
 def api_destinations_delete(destination_pk):
     try:
         user = session.get("user", "")
-        if not user: return "", 401
+        if not user: return "", 400
 
         db, cursor = x.db()
         q = """
@@ -607,7 +607,7 @@ def api_destinations_delete(destination_pk):
         destination = cursor.fetchone()
         if not destination:
             ___tip = render_template("___tip.html", status="error", message="Destination not found")
-            return f"""<browser mix-after-begin=\"#tooltip\">{___tip}</browser>""", 404
+            return f"""<browser mix-after-begin=\"#tooltip\">{___tip}</browser>""", 400
 
         q = """
             DELETE FROM destinations
