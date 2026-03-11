@@ -14,7 +14,9 @@
 
 <nav>
     <div class="nav-left">
-        <a href="/">Home</a>
+        <a class="nav-logo-link" href="/" aria-label="Home">
+            <img class="nav-logo" src="/static/logo.webp" alt="Travel logo">
+        </a>
         <a href="/signup">Signup</a>
 
         {% if not user %}

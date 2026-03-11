@@ -57,6 +57,19 @@ nav {
     gap: 0.75rem;
 }
 
+.nav-logo-link {
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+}
+
+.nav-logo {
+    width: 2.1rem;
+    height: 2.1rem;
+    object-fit: contain;
+    border-radius: 50%;
+}
+
 .nav-right {
     color: var(--muted);
     font-weight: 700;
