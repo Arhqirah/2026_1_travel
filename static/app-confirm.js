@@ -1,7 +1,6 @@
 // Escapes text so it can safely be rendered as HTML.
 function appEscapeHtml(value) {
-	const text = value == null ? "" : String(value)
-	return text
+	return (value == null ? "" : String(value))
 		.replaceAll("&", "&amp;")
 		.replaceAll("<", "&lt;")
 		.replaceAll(">", "&gt;")
@@ -12,10 +11,7 @@ function appEscapeHtml(value) {
 // Shows a custom confirmation dialog and returns a Promise with the answer.
 function appConfirm(message) {
 	return new Promise((resolve) => {
-		const existing = document.getElementById("app-confirm-overlay")
-		if (existing) {
-			existing.remove()
-		}
+		document.getElementById("app-confirm-overlay")?.remove()
 
 		const overlay = document.createElement("div")
 		overlay.id = "app-confirm-overlay"
@@ -33,17 +29,22 @@ function appConfirm(message) {
 
 		const cancelBtn = overlay.querySelector(".app-confirm-btn-cancel")
 		const okBtn = overlay.querySelector(".app-confirm-btn-ok")
+		let resolved = false
+
+		const close = (answer) => {
+			if (resolved) {
+				return
+			}
+			resolved = true
+			document.removeEventListener("keydown", onKeyDown)
+			overlay.remove()
+			resolve(answer)
+		}
 
 		const onKeyDown = (event) => {
 			if (event.key === "Escape") {
 				close(false)
 			}
-		}
-
-		const close = (answer) => {
-			document.removeEventListener("keydown", onKeyDown)
-			overlay.remove()
-			resolve(answer)
 		}
 
 		cancelBtn.addEventListener("click", () => close(false))
@@ -97,62 +98,13 @@ function appHandleMixConfirm(event) {
 			return
 		}
 
-		if (mixConfirmElement.tagName === "FORM") {
-			appRunMixActionWithoutNativeConfirm(mixConfirmElement, () => {
-				mixConfirmElement.requestSubmit()
-			})
-			return
-		}
+		const trigger = mixConfirmElement.tagName === "FORM"
+			? () => mixConfirmElement.requestSubmit()
+			: () => mixConfirmElement.click()
 
-		appRunMixActionWithoutNativeConfirm(mixConfirmElement, () => {
-			mixConfirmElement.click()
-		})
+		appRunMixActionWithoutNativeConfirm(mixConfirmElement, trigger)
 	})
 }
 
 document.addEventListener("click", appHandleMixConfirm, true)
 document.addEventListener("submit", appHandleMixConfirm, true)
-
-// Syncs date rules in a form set: no past dates and end date after start date.
-function appSyncDestinationDateConstraints(formElement) {
-	const startInput = formElement.querySelector('input[name="destination_start_date"]')
-	const endInput = formElement.querySelector('input[name="destination_end_date"]')
-	if (!startInput || !endInput) {
-		return
-	}
-
-	const today = new Date()
-	const todayIso = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`
-	startInput.min = todayIso
-
-	const startValue = startInput.value || ""
-	if (startValue) {
-		endInput.min = startValue < todayIso ? todayIso : startValue
-		if (endInput.value && endInput.value < startValue) {
-			endInput.value = ""
-		}
-		return
-	}
-
-	endInput.min = todayIso
-}
-
-// Initializes date rules for all destination forms and updates them on input changes.
-function appSetupDestinationDateConstraints() {
-	const forms = document.querySelectorAll(".destination-form")
-	forms.forEach((formElement) => {
-		appSyncDestinationDateConstraints(formElement)
-
-		const startInput = formElement.querySelector('input[name="destination_start_date"]')
-		const endInput = formElement.querySelector('input[name="destination_end_date"]')
-		if (!startInput || !endInput) {
-			return
-		}
-
-		startInput.addEventListener("change", () => appSyncDestinationDateConstraints(formElement))
-		startInput.addEventListener("input", () => appSyncDestinationDateConstraints(formElement))
-	})
-}
-
-// Sets up date rules when the page is loaded.
-document.addEventListener("DOMContentLoaded", appSetupDestinationDateConstraints)
