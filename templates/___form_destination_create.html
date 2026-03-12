@@ -1,0 +1,61 @@
+<form mix-post="/api-destinations-create" autocomplete="off" class="destination-form" enctype="multipart/form-data">
+    <div>
+        <label>
+            Destination title <span>{{ x.DESTINATION_TITLE_MIN }} to {{ x.DESTINATION_TITLE_MAX }} characters</span>
+        </label>
+        <input
+            name="destination_title"
+            type="text"
+            placeholder="e.g. Tokyo, Summer 2026"
+            mix-validate="{{x.REGEX_DESTINATION_TITLE}}"
+        >
+    </div>
+
+    <div>
+        <label>
+            Country <span>choose a country from the list</span>
+        </label>
+        <select name="destination_country" required>
+            <option value="" selected disabled>Select country</option>
+            {% for country in x.COUNTRIES %}
+                <option value="{{ country }}">{{ country }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label>Start date <span>optional</span></label>
+        <input
+            name="destination_start_date"
+            type="date"
+        >
+    </div>
+
+    <div>
+        <label>End date <span>optional</span></label>
+        <input
+            name="destination_end_date"
+            type="date"
+        >
+    </div>
+
+    <div>
+        <label>
+            Notes <span>max {{ x.DESTINATION_DESCRIPTION_MAX }} characters</span>
+        </label>
+        <textarea
+            name="destination_description"
+            placeholder="Short notes, plans, or memories"
+            mix-validate="{{x.REGEX_DESTINATION_DESCRIPTION}}"
+        ></textarea>
+    </div>
+
+    <div>
+        <label>
+            Image <span>optional: png, jpg, jpeg, webp, gif (max 5MB)</span>
+        </label>
+        <input name="destination_image" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
+    </div>
+
+    <button>Create destination</button>
+</form>

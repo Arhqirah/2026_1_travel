@@ -1,0 +1,57 @@
+<form mix-post="/api-destinations-update/{{ destination.destination_pk }}" autocomplete="off" class="destination-form" enctype="multipart/form-data">
+    <div>
+        <label>Destination title</label>
+        <input
+            name="destination_title"
+            type="text"
+            value="{{ destination.destination_title }}"
+            mix-validate="{{x.REGEX_DESTINATION_TITLE}}"
+        >
+    </div>
+
+    <div>
+        <label>Country</label>
+        <select name="destination_country" required>
+            {% for country in x.COUNTRIES %}
+                <option value="{{ country }}" {% if country == destination.destination_country %}selected{% endif %}>{{ country }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label>Start date</label>
+        <input
+            name="destination_start_date"
+            type="date"
+            value="{{ destination.destination_start_date or '' }}"
+        >
+    </div>
+
+    <div>
+        <label>End date</label>
+        <input
+            name="destination_end_date"
+            type="date"
+            value="{{ destination.destination_end_date or '' }}"
+        >
+    </div>
+
+    <div>
+        <label>Notes</label>
+        <textarea
+            name="destination_description"
+            mix-validate="{{x.REGEX_DESTINATION_DESCRIPTION}}"
+        >{{ destination.destination_description }}</textarea>
+    </div>
+
+    <div>
+        <label>
+            Replace image <span>optional: leave empty to keep current image</span>
+        </label>
+        <input name="destination_image" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
+    </div>
+
+    <div class="destination-actions">
+        <button>Update</button>
+    </div>
+</form>
