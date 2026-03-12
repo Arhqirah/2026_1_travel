@@ -206,3 +206,19 @@ Forklaring:
 
 - Brug `time` til Unix timestamps i DB (fx `destination_created_at`).
 - Brug `datetime/date` til dato-felter og sammenligninger (fx start/slutdato).
+
+
+### Endpoints
+
+app.py:132
+app.py:145
+app.py:158
+app.py:225
+app.py:238
+app.py:296
+app.py:326
+app.py:338
+app.py:369
+app.py:415
+app.py:520
+app.py:638
