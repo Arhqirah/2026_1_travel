@@ -8,29 +8,11 @@
             {% include "___form_destinations_create.html" %}
         </section>
 
-        <section class="destinations-list">
+        <section id="destinations-list" class="destinations-list">
             {% for destination in destinations %}
-                <article class="destination-card">
-                    {% if destination.destination_image_name %}
-                        <img class="destination-image" src="/static/uploads/{{ destination.destination_image_name }}" alt="Destination image for {{ destination.destination_title }}">
-                    {% endif %}
-
-                    {% if destination.destination_start_date or destination.destination_end_date %}
-                        {% set start_date = destination.destination_start_date or '...' %}
-                        {% set end_date = destination.destination_end_date or '...' %}
-                        <p class="profile-muted">
-                            {{ start_date }} to {{ end_date }}
-                        </p>
-                    {% endif %}
-
-                    {% include "___form_destinations_update.html" %}
-
-                    <form mix-post="/api-destinations-delete/{{ destination.destination_pk }}" class="destination-delete-form" data-delete-confirm="Are you sure you want to delete this destination?">
-                        <button>Delete</button>
-                    </form>
-                </article>
+                {% include "___destinations_card.html" %}
             {% else %}
-                <p class="card">No destinations yet. Create your first one above.</p>
+                <p id="destinations-empty" class="card">No destinations yet. Create your first one above.</p>
             {% endfor %}
         </section>
     </section>

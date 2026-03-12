@@ -197,6 +197,16 @@ textarea:focus {
     border-color: #5eead4;
 }
 
+.destination-field-ok {
+    border-color: #86efac;
+    background: #f0fdf4;
+}
+
+.destination-field-error {
+    border-color: #fecaca;
+    background: #fef2f2;
+}
+
 button,
 .btn {
     border: 0;

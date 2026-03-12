@@ -100,12 +100,20 @@ def remove_destination_image(image_name):
 
 
 ##############################
+# Renders tooltip HTML and clears previous tip content before showing a new one.
+def tip_response(message, status="error", http_status=400):
+    ___tip = render_template("___tip.html", status=status, message=message)
+    return f"""
+    <browser mix-replace="#tooltip"></browser>
+    <browser mix-after-begin="#tooltip">{___tip}</browser>
+    """, http_status
+
+
+##############################
 @app.errorhandler(RequestEntityTooLarge)
 # Returns a friendly error when upload exceeds max size.
 def handle_file_too_large(_error):
-    error_message = "Image too large (max 5MB)"
-    ___tip = render_template("___tip.html", status="error", message=error_message)
-    return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
+    return tip_response("Image too large (max 5MB)", "error", 400)
 
 ##############################
 @app.get("/")
@@ -439,54 +447,52 @@ def api_destinations_create():
         ))
         db.commit()
 
-        return f"""<browser mix-redirect="/destinations"></browser>"""
+        destination = {
+            "destination_pk": destination_pk,
+            "destination_title": destination_title,
+            "destination_country": destination_country,
+            "destination_image_name": destination_image_name,
+            "destination_start_date": destination_start_date,
+            "destination_end_date": destination_end_date,
+            "destination_description": destination_description,
+        }
+        destination_card = render_template("___destinations_card.html", destination=destination, x=x)
+        form_create_destination = render_template("___form_destinations_create.html", x=x)
+
+        return f"""
+        <browser mix-replace="#form_destinations_create">{form_create_destination}</browser>
+        <browser mix-replace="#destinations-empty"></browser>
+        <browser mix-after-begin="#destinations-list">{destination_card}</browser>
+        """
 
     except RequestEntityTooLarge:
-        error_message = "Image too large (max 5MB)"
-        ___tip = render_template("___tip.html", status="error", message=error_message)
-        return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
+        return tip_response("Image too large (max 5MB)", "error", 400)
 
     except Exception as ex:
         ic(ex)
 
         if "company_exception destination_title" in str(ex):
-            error_message = f"destination title {x.DESTINATION_TITLE_MIN} to {x.DESTINATION_TITLE_MAX} characters"
-            ___tip = render_template("___tip.html", status="error", message=error_message)
-            return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
+            return tip_response(f"destination title {x.DESTINATION_TITLE_MIN} to {x.DESTINATION_TITLE_MAX} characters", "error", 400)
 
         if "company_exception destination_country" in str(ex):
-            error_message = f"destination country {x.DESTINATION_COUNTRY_MIN} to {x.DESTINATION_COUNTRY_MAX} characters"
-            ___tip = render_template("___tip.html", status="error", message=error_message)
-            return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
+            return tip_response(f"destination country {x.DESTINATION_COUNTRY_MIN} to {x.DESTINATION_COUNTRY_MAX} characters", "error", 400)
 
         if "company_exception destination_description" in str(ex):
-            error_message = f"description max {x.DESTINATION_DESCRIPTION_MAX} characters"
-            ___tip = render_template("___tip.html", status="error", message=error_message)
-            return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
+            return tip_response(f"description max {x.DESTINATION_DESCRIPTION_MAX} characters", "error", 400)
 
         if "company_exception destination_start_date" in str(ex) or "company_exception destination_end_date" in str(ex):
-            error_message = "date must use format YYYY-MM-DD"
-            ___tip = render_template("___tip.html", status="error", message=error_message)
-            return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
+            return tip_response("date must use format YYYY-MM-DD", "error", 400)
 
         if "company_exception destination_date_range" in str(ex):
-            error_message = "end date must be on or after start date"
-            ___tip = render_template("___tip.html", status="error", message=error_message)
-            return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
+            return tip_response("end date must be on or after start date", "error", 400)
 
         if "company_exception destination_past_date" in str(ex):
-            error_message = "dates cannot be in the past"
-            ___tip = render_template("___tip.html", status="error", message=error_message)
-            return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
+            return tip_response("dates cannot be in the past", "error", 400)
 
         if "company_exception destination_image_type" in str(ex):
-            error_message = "Invalid image type (png, jpg, jpeg, webp, gif)"
-            ___tip = render_template("___tip.html", status="error", message=error_message)
-            return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
+            return tip_response("Invalid image type (png, jpg, jpeg, webp, gif)", "error", 400)
 
-        error_message = "System under maintenance"
-        ___tip = render_template("___tip.html", status="error", message=error_message)
-        return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 500
+        return tip_response("System under maintenance", "error", 500)
 
     finally:
         if "cursor" in locals(): cursor.close()
@@ -518,8 +524,7 @@ def api_destinations_update(destination_pk):
         cursor.execute(q, (destination_pk, user["user_pk"]))
         existing_destination = cursor.fetchone()
         if not existing_destination:
-            ___tip = render_template("___tip.html", status="error", message="Destination not found")
-            return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
+            return tip_response("Destination not found", "error", 400)
 
         old_image_name = existing_destination["destination_image_name"]
         uploaded_image_name = save_destination_image()
@@ -555,54 +560,47 @@ def api_destinations_update(destination_pk):
         if uploaded_image_name and old_image_name and uploaded_image_name != old_image_name:
             remove_destination_image(old_image_name)
 
-        return f"""<browser mix-redirect="/destinations"></browser>"""
+        destination = {
+            "destination_pk": destination_pk,
+            "destination_title": destination_title,
+            "destination_country": destination_country,
+            "destination_image_name": destination_image_name,
+            "destination_start_date": destination_start_date,
+            "destination_end_date": destination_end_date,
+            "destination_description": destination_description,
+        }
+        destination_card = render_template("___destinations_card.html", destination=destination, x=x)
+
+        return f"""<browser mix-replace="#destination-card-{destination_pk}">{destination_card}</browser>"""
 
     except RequestEntityTooLarge:
-        error_message = "Image too large (max 5MB)"
-        ___tip = render_template("___tip.html", status="error", message=error_message)
-        return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
+        return tip_response("Image too large (max 5MB)", "error", 400)
 
     except Exception as ex:
         ic(ex)
 
         if "company_exception destination_title" in str(ex):
-            error_message = f"destination title {x.DESTINATION_TITLE_MIN} to {x.DESTINATION_TITLE_MAX} characters"
-            ___tip = render_template("___tip.html", status="error", message=error_message)
-            return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
+            return tip_response(f"destination title {x.DESTINATION_TITLE_MIN} to {x.DESTINATION_TITLE_MAX} characters", "error", 400)
 
         if "company_exception destination_country" in str(ex):
-            error_message = f"destination country {x.DESTINATION_COUNTRY_MIN} to {x.DESTINATION_COUNTRY_MAX} characters"
-            ___tip = render_template("___tip.html", status="error", message=error_message)
-            return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
+            return tip_response(f"destination country {x.DESTINATION_COUNTRY_MIN} to {x.DESTINATION_COUNTRY_MAX} characters", "error", 400)
 
         if "company_exception destination_description" in str(ex):
-            error_message = f"description max {x.DESTINATION_DESCRIPTION_MAX} characters"
-            ___tip = render_template("___tip.html", status="error", message=error_message)
-            return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
+            return tip_response(f"description max {x.DESTINATION_DESCRIPTION_MAX} characters", "error", 400)
 
         if "company_exception destination_start_date" in str(ex) or "company_exception destination_end_date" in str(ex):
-            error_message = "date must use format YYYY-MM-DD"
-            ___tip = render_template("___tip.html", status="error", message=error_message)
-            return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
+            return tip_response("date must use format YYYY-MM-DD", "error", 400)
 
         if "company_exception destination_date_range" in str(ex):
-            error_message = "end date must be on or after start date"
-            ___tip = render_template("___tip.html", status="error", message=error_message)
-            return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
+            return tip_response("end date must be on or after start date", "error", 400)
 
         if "company_exception destination_past_date" in str(ex):
-            error_message = "dates cannot be in the past"
-            ___tip = render_template("___tip.html", status="error", message=error_message)
-            return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
+            return tip_response("dates cannot be in the past", "error", 400)
 
         if "company_exception destination_image_type" in str(ex):
-            error_message = "Invalid image type (png, jpg, jpeg, webp, gif)"
-            ___tip = render_template("___tip.html", status="error", message=error_message)
-            return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
+            return tip_response("Invalid image type (png, jpg, jpeg, webp, gif)", "error", 400)
 
-        error_message = "System under maintenance"
-        ___tip = render_template("___tip.html", status="error", message=error_message)
-        return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 500
+        return tip_response("System under maintenance", "error", 500)
 
     finally:
         if "cursor" in locals(): cursor.close()
@@ -627,8 +625,7 @@ def api_destinations_delete(destination_pk):
         cursor.execute(q, (destination_pk, user["user_pk"]))
         destination = cursor.fetchone()
         if not destination:
-            ___tip = render_template("___tip.html", status="error", message="Destination not found")
-            return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 400
+            return tip_response("Destination not found", "error", 400)
 
         q = """
             DELETE FROM destinations
@@ -640,13 +637,22 @@ def api_destinations_delete(destination_pk):
 
         remove_destination_image(destination["destination_image_name"])
 
-        return f"""<browser mix-redirect="/destinations"></browser>"""
+        q = "SELECT COUNT(*) AS total FROM destinations WHERE destination_user_fk = %s"
+        cursor.execute(q, (user["user_pk"],))
+        remaining = cursor.fetchone()["total"]
+
+        if remaining == 0:
+            empty_state = '<p id="destinations-empty" class="card">No destinations yet. Create your first one above.</p>'
+            return f"""
+            <browser mix-replace="#destination-card-{destination_pk}"></browser>
+            <browser mix-after-begin="#destinations-list">{empty_state}</browser>
+            """
+
+        return f"""<browser mix-replace="#destination-card-{destination_pk}"></browser>"""
 
     except Exception as ex:
         ic(ex)
-        error_message = "System under maintenance"
-        ___tip = render_template("___tip.html", status="error", message=error_message)
-        return f"""<browser mix-after-begin="#tooltip">{___tip}</browser>""", 500
+        return tip_response("System under maintenance", "error", 500)
 
     finally:
         if "cursor" in locals(): cursor.close()
