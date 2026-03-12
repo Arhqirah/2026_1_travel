@@ -366,6 +366,52 @@ def show_destinations():
 
 
 ##############################
+@app.get("/api-destinations-json")
+# Returns all destinations for the logged-in user as JSON.
+def api_destinations_json():
+    try:
+        user = session.get("user", "")
+        if not user:
+            return jsonify({"ok": False, "error": "not_authenticated"}), 401
+
+        ensure_destination_date_columns()
+
+        db, cursor = x.db()
+        q = """
+             SELECT destination_pk, destination_title, destination_country,
+                 destination_image_name, destination_start_date, destination_end_date,
+                   destination_description, destination_created_at, destination_updated_at
+            FROM destinations
+            WHERE destination_user_fk = %s
+            ORDER BY destination_created_at DESC
+        """
+        cursor.execute(q, (user["user_pk"],))
+        rows = cursor.fetchall()
+
+        destinations = []
+        for row in rows:
+            destinations.append({
+                "destination_pk": row["destination_pk"],
+                "destination_title": row["destination_title"],
+                "destination_country": row["destination_country"],
+                "destination_image_name": row["destination_image_name"],
+                "destination_start_date": row["destination_start_date"].isoformat() if row["destination_start_date"] else None,
+                "destination_end_date": row["destination_end_date"].isoformat() if row["destination_end_date"] else None,
+                "destination_description": row["destination_description"],
+                "destination_created_at": row["destination_created_at"],
+                "destination_updated_at": row["destination_updated_at"],
+            })
+
+        return jsonify({"ok": True, "destinations": destinations})
+    except Exception as ex:
+        ic(ex)
+        return jsonify({"ok": False, "error": "system_under_maintenance"}), 500
+    finally:
+        if "cursor" in locals(): cursor.close()
+        if "db" in locals(): db.close()
+
+
+##############################
 @app.post("/api-destinations-create")
 # Creates a new destination including dates, notes, and optional image.
 def api_destinations_create():
