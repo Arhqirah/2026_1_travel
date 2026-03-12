@@ -32,8 +32,16 @@ function appSetDestinationFieldState(fieldElement, isValid) {
 	fieldElement.classList.add("destination-field-error")
 }
 
+// Clears visual validation state from a field.
+function appClearDestinationFieldState(fieldElement) {
+	fieldElement.classList.remove("destination-field-ok", "destination-field-error")
+}
+
 // Validates one destination field based on required and mix-validate attributes.
-function appValidateDestinationField(fieldElement) {
+function appValidateDestinationField(fieldElement, options = {}) {
+	const force = options.force === true
+	const touched = fieldElement.getAttribute("data-destination-touched") === "yes"
+
 	const tagName = fieldElement.tagName
 	if (!["INPUT", "SELECT", "TEXTAREA"].includes(tagName)) {
 		return true
@@ -58,15 +66,20 @@ function appValidateDestinationField(fieldElement) {
 		}
 	}
 
+	if (!force && !touched) {
+		appClearDestinationFieldState(fieldElement)
+		return isValid
+	}
+
 	appSetDestinationFieldState(fieldElement, isValid)
 	return isValid
 }
 
 // Validates all fields in one destination form and returns overall validity.
-function appValidateDestinationForm(formElement) {
+function appValidateDestinationForm(formElement, options = {}) {
 	let isFormValid = true
 	formElement.querySelectorAll("input, select, textarea").forEach((fieldElement) => {
-		if (!appValidateDestinationField(fieldElement)) {
+		if (!appValidateDestinationField(fieldElement, options)) {
 			isFormValid = false
 		}
 	})
@@ -77,7 +90,6 @@ function appValidateDestinationForm(formElement) {
 function appSetupDestinationDateConstraints() {
 	document.querySelectorAll(".destination-form").forEach((formElement) => {
 		appSyncDestinationDateConstraints(formElement)
-		appValidateDestinationForm(formElement)
 	})
 }
 
@@ -93,6 +105,7 @@ function appHandleDestinationFieldEvents(event) {
 		return
 	}
 
+	fieldElement.setAttribute("data-destination-touched", "yes")
 	appValidateDestinationField(fieldElement)
 
 	if (["destination_start_date", "destination_end_date"].includes(fieldElement.getAttribute("name") || "")) {
@@ -115,7 +128,11 @@ function appHandleDestinationFormSubmit(event) {
 		return
 	}
 
-	if (!appValidateDestinationForm(formElement)) {
+	formElement.querySelectorAll("input, select, textarea").forEach((fieldElement) => {
+		fieldElement.setAttribute("data-destination-touched", "yes")
+	})
+
+	if (!appValidateDestinationForm(formElement, { force: true })) {
 		event.preventDefault()
 		event.stopPropagation()
 	}

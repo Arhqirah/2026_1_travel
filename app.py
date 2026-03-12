@@ -410,6 +410,8 @@ def api_destinations_create():
         destination_title = x.validate_destination_title()
         destination_country = x.validate_destination_country()
         destination_start_date, destination_end_date = x.validate_destination_dates()
+        if not destination_start_date:
+            raise Exception("company_exception destination_start_date_required")
         destination_description = x.validate_destination_description()
         destination_image_name = save_destination_image()
 
@@ -479,6 +481,9 @@ def api_destinations_create():
 
         if "company_exception destination_description" in str(ex):
             return tip_response(f"description max {x.DESTINATION_DESCRIPTION_MAX} characters", "error", 400)
+
+        if "company_exception destination_start_date_required" in str(ex):
+            return tip_response("start date is required", "error", 400)
 
         if "company_exception destination_start_date" in str(ex) or "company_exception destination_end_date" in str(ex):
             return tip_response("date must use format YYYY-MM-DD", "error", 400)
