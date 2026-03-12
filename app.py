@@ -20,6 +20,8 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = settings.FLASK_SECRET_KEY
 app.config['SESSION_TYPE'] = settings.SESSION_TYPE
 app.config['MAX_CONTENT_LENGTH'] = settings.MAX_CONTENT_LENGTH
+app.config['SESSION_FILE_DIR'] = os.path.join(app.root_path, '.session_data')
+os.makedirs(app.config['SESSION_FILE_DIR'], exist_ok=True)
 Session(app)
 
 UPLOAD_FOLDER = os.path.join(app.static_folder, "uploads")
