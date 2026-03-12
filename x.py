@@ -5,17 +5,16 @@ import calendar
 from datetime import date
 from functools import wraps
 from country import COUNTRIES
-from settings import settings
 
 ##############################
 # Creates a database connection and returns db + dictionary cursor.
 def db():
     try:
         db = mysql.connector.connect(
-            host = settings.DB_HOST,
-            user = settings.DB_USER,
-            password = settings.DB_PASSWORD,
-            database = settings.DB_NAME
+            host = "mariadb",
+            user = "root",  
+            password = "password",
+            database = "2026_1_travel"
         )
         cursor = db.cursor(dictionary=True)
         return db, cursor
