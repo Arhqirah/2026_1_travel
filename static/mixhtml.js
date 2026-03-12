@@ -212,13 +212,6 @@ function mixhtml(){
     try{
         const el = event.target
 
-        if(el.hasAttribute("mix-confirm")){
-            const message = el.getAttribute("mix-confirm")
-            if(message && !window.confirm(message)){
-                return
-            }
-        }
-
         if( el.hasAttribute("mix-page") ){
             const href = el.getAttribute("href")
             const loaded_page = document.querySelector(`[mix-url="${href}"]`)

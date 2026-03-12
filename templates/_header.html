@@ -24,11 +24,13 @@
         {% else %}
             <a href="/profile">Profile</a>
             <a href="/destinations">Destinations</a>
-            <a href="/logout">Logout</a>
         {% endif %}
     </div>
 
     {% if user %}
-        <div class="nav-right">Hi {{ user.user_first_name }}</div>
+        <div class="nav-right">
+            <span>Hi {{ user.user_first_name }}</span>
+            <a class="nav-logout" href="/logout">Logout</a>
+        </div>
     {% endif %}
 </nav>

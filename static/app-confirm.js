@@ -61,50 +61,41 @@ function appConfirm(message) {
 	})
 }
 
-// Runs a MixHTML action without the browser's native confirm dialog.
-function appRunMixActionWithoutNativeConfirm(targetElement, trigger) {
-	const message = targetElement.getAttribute("mix-confirm")
-	targetElement.removeAttribute("mix-confirm")
-
-	try {
-		trigger()
-	} finally {
-		setTimeout(() => {
-			if (!targetElement.hasAttribute("mix-confirm") && message) {
-				targetElement.setAttribute("mix-confirm", message)
-			}
-		}, 0)
-	}
-}
-
-// Catches elements with mix-confirm and shows our custom dialog before continuing.
-function appHandleMixConfirm(event) {
+// Handles delete forms that should always use the custom popup.
+function appHandleDeleteConfirm(event) {
 	const eventTarget = event.target
 	if (!(eventTarget instanceof Element)) {
 		return
 	}
 
-	const mixConfirmElement = eventTarget.closest("[mix-confirm]")
-	if (!mixConfirmElement) {
+	const deleteForm = eventTarget.closest("form[data-delete-confirm]")
+	if (!deleteForm) {
+		return
+	}
+
+	if (deleteForm.getAttribute("data-delete-confirm-bypass") === "yes") {
 		return
 	}
 
 	event.preventDefault()
 	event.stopPropagation()
 
-	const message = mixConfirmElement.getAttribute("mix-confirm")
+	const message = deleteForm.getAttribute("data-delete-confirm") || "Are you sure you want to delete this destination?"
 	appConfirm(message).then((confirmed) => {
 		if (!confirmed) {
 			return
 		}
 
-		const trigger = mixConfirmElement.tagName === "FORM"
-			? () => mixConfirmElement.requestSubmit()
-			: () => mixConfirmElement.click()
-
-		appRunMixActionWithoutNativeConfirm(mixConfirmElement, trigger)
+		deleteForm.setAttribute("data-delete-confirm-bypass", "yes")
+		try {
+			deleteForm.requestSubmit()
+		} finally {
+			setTimeout(() => {
+				deleteForm.removeAttribute("data-delete-confirm-bypass")
+			}, 0)
+		}
 	})
 }
 
-document.addEventListener("click", appHandleMixConfirm, true)
-document.addEventListener("submit", appHandleMixConfirm, true)
+document.addEventListener("click", appHandleDeleteConfirm, true)
+document.addEventListener("submit", appHandleDeleteConfirm, true)

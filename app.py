@@ -3,12 +3,12 @@ import x
 import uuid
 import time
 import os
-from datetime import date
 from flask_session import Session
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
 from werkzeug.exceptions import RequestEntityTooLarge
+from settings import settings
  
  
 
@@ -17,8 +17,9 @@ ic.configureOutput(prefix=f'______ | ', includeContext=True)
 
 app = Flask(__name__)
 
-app.config['SESSION_TYPE'] = 'filesystem'
-app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
+app.config['SECRET_KEY'] = settings.FLASK_SECRET_KEY
+app.config['SESSION_TYPE'] = settings.SESSION_TYPE
+app.config['MAX_CONTENT_LENGTH'] = settings.MAX_CONTENT_LENGTH
 Session(app)
 
 UPLOAD_FOLDER = os.path.join(app.static_folder, "uploads")
@@ -57,30 +58,6 @@ def ensure_destination_date_columns():
     finally:
         cursor.close()
         db.close()
-
-
-##############################
-# Validates that dates are not in the past and end date is not before start date.
-def validate_destination_date_range(destination_start_date, destination_end_date):
-    today = date.today()
-
-    if destination_start_date:
-        start_date = date.fromisoformat(destination_start_date)
-        if start_date < today:
-            raise Exception("company_exception destination_past_date")
-
-    if destination_end_date:
-        end_date = date.fromisoformat(destination_end_date)
-        if end_date < today:
-            raise Exception("company_exception destination_past_date")
-
-    if not destination_start_date or not destination_end_date:
-        return
-
-    start_date = date.fromisoformat(destination_start_date)
-    end_date = date.fromisoformat(destination_end_date)
-    if end_date < start_date:
-        raise Exception("company_exception destination_date_range")
 
 
 ##############################
@@ -372,7 +349,7 @@ def api_destinations_json():
     try:
         user = session.get("user", "")
         if not user:
-            return jsonify({"ok": False, "error": "not_authenticated"}), 401
+            return jsonify({"ok": False, "error": "not_authenticated"}), 400
 
         ensure_destination_date_columns()
 
@@ -417,14 +394,12 @@ def api_destinations_json():
 def api_destinations_create():
     try:
         user = session.get("user", "")
-        if not user: return "", 401
+        if not user: return "", 400
         ensure_destination_date_columns()
 
         destination_title = x.validate_destination_title()
         destination_country = x.validate_destination_country()
-        destination_start_date = x.validate_destination_start_date()
-        destination_end_date = x.validate_destination_end_date()
-        validate_destination_date_range(destination_start_date, destination_end_date)
+        destination_start_date, destination_end_date = x.validate_destination_dates()
         destination_description = x.validate_destination_description()
         destination_image_name = save_destination_image()
 
@@ -527,9 +502,7 @@ def api_destinations_update(destination_pk):
 
         destination_title = x.validate_destination_title()
         destination_country = x.validate_destination_country()
-        destination_start_date = x.validate_destination_start_date()
-        destination_end_date = x.validate_destination_end_date()
-        validate_destination_date_range(destination_start_date, destination_end_date)
+        destination_start_date, destination_end_date = x.validate_destination_dates()
         destination_description = x.validate_destination_description()
         destination_updated_at = int(time.time())
 

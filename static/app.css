@@ -71,9 +71,24 @@ nav {
 }
 
 .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
     color: var(--muted);
     font-weight: 700;
     font-size: 0.92rem;
+}
+
+.nav-logout {
+    color: var(--text);
+    font-weight: 600;
+    text-decoration: none;
+    padding: 0.45rem 0.7rem;
+    border-radius: 8px;
+}
+
+.nav-logout:hover {
+    background: #f3e8d8;
 }
 
 nav a {

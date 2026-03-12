@@ -1,19 +1,21 @@
 from flask import request, make_response
 import mysql.connector
 import re # Regular expressions also called Regex
+import calendar
 from datetime import date
 from functools import wraps
 from country import COUNTRIES
+from settings import settings
 
 ##############################
 # Creates a database connection and returns db + dictionary cursor.
 def db():
     try:
         db = mysql.connector.connect(
-            host = "mariadb",
-            user = "root",  
-            password = "password",
-            database = "2026_1_travel"
+            host = settings.DB_HOST,
+            user = settings.DB_USER,
+            password = settings.DB_PASSWORD,
+            database = settings.DB_NAME
         )
         cursor = db.cursor(dictionary=True)
         return db, cursor
@@ -120,30 +122,64 @@ def validate_destination_description():
 
 ##############################
 REGEX_DESTINATION_DATE = r"^\d{4}-\d{2}-\d{2}$"
+
+def _validate_destination_date_value(destination_date, field_name):
+    if destination_date == "":
+        return None
+
+    if not re.match(REGEX_DESTINATION_DATE, destination_date):
+        raise Exception(f"company_exception {field_name}")
+
+    year, month, day = map(int, destination_date.split("-"))
+
+    if year < 1 or year > 9999:
+        raise Exception(f"company_exception {field_name}")
+
+    if month < 1 or month > 12:
+        raise Exception(f"company_exception {field_name}")
+
+    max_day = calendar.monthrange(year, month)[1]
+    if day < 1 or day > max_day:
+        raise Exception(f"company_exception {field_name}")
+
+    return destination_date
+
+
+def _destination_date_to_date(destination_date):
+    year, month, day = map(int, destination_date.split("-"))
+    return date(year, month, day)
+
+
+def validate_destination_dates():
+    destination_start_date = validate_destination_start_date()
+    destination_end_date = validate_destination_end_date()
+    today = date.today()
+
+    start_date_obj = None
+    if destination_start_date:
+        start_date_obj = _destination_date_to_date(destination_start_date)
+        if start_date_obj < today:
+            raise Exception("company_exception destination_past_date")
+
+    end_date_obj = None
+    if destination_end_date:
+        end_date_obj = _destination_date_to_date(destination_end_date)
+        if end_date_obj < today:
+            raise Exception("company_exception destination_past_date")
+
+    if start_date_obj and end_date_obj and end_date_obj < start_date_obj:
+        raise Exception("company_exception destination_date_range")
+
+    return destination_start_date, destination_end_date
+
 # Validates start date in YYYY-MM-DD format or empty value.
 def validate_destination_start_date():
     destination_start_date = request.form.get("destination_start_date", "").strip()
-    if destination_start_date == "":
-        return None
-    if not re.match(REGEX_DESTINATION_DATE, destination_start_date):
-        raise Exception("company_exception destination_start_date")
-    try:
-        date.fromisoformat(destination_start_date)
-    except ValueError:
-        raise Exception("company_exception destination_start_date")
-    return destination_start_date
+    return _validate_destination_date_value(destination_start_date, "destination_start_date")
 
 
 ##############################
 # Validates end date in YYYY-MM-DD format or empty value.
 def validate_destination_end_date():
     destination_end_date = request.form.get("destination_end_date", "").strip()
-    if destination_end_date == "":
-        return None
-    if not re.match(REGEX_DESTINATION_DATE, destination_end_date):
-        raise Exception("company_exception destination_end_date")
-    try:
-        date.fromisoformat(destination_end_date)
-    except ValueError:
-        raise Exception("company_exception destination_end_date")
-    return destination_end_date
+    return _validate_destination_date_value(destination_end_date, "destination_end_date")

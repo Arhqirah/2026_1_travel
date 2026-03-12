@@ -69,10 +69,6 @@
         </section>
 
         <section class="destinations-list">
-            {% if not destinations %}
-                <p class="card">No destinations yet. Create your first one above.</p>
-            {% endif %}
-
             {% for destination in destinations %}
                 <article class="destination-card">
                     {% if destination.destination_image_name %}
@@ -80,10 +76,10 @@
                     {% endif %}
 
                     {% if destination.destination_start_date or destination.destination_end_date %}
+                        {% set start_date = destination.destination_start_date or '...' %}
+                        {% set end_date = destination.destination_end_date or '...' %}
                         <p class="profile-muted">
-                            {% if destination.destination_start_date %}{{ destination.destination_start_date }}{% else %}...{% endif %}
-                            to
-                            {% if destination.destination_end_date %}{{ destination.destination_end_date }}{% else %}...{% endif %}
+                            {{ start_date }} to {{ end_date }}
                         </p>
                     {% endif %}
 
@@ -145,10 +141,12 @@
                         </div>
                     </form>
 
-                    <form mix-post="/api-destinations-delete/{{ destination.destination_pk }}" class="destination-delete-form" mix-confirm="Are you sure you want to delete this destination?">
+                    <form mix-post="/api-destinations-delete/{{ destination.destination_pk }}" class="destination-delete-form" data-delete-confirm="Are you sure you want to delete this destination?">
                         <button>Delete</button>
                     </form>
                 </article>
+            {% else %}
+                <p class="card">No destinations yet. Create your first one above.</p>
             {% endfor %}
         </section>
     </section>
